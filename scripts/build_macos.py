@@ -64,9 +64,11 @@ def build_core(variant):
     environment['CGO_ENABLED'] = '1'
     sdk_path = subprocess.check_output(['xcrun', '--sdk', 'macosx', '--show-sdk-path'], text=True).strip()
     compiler = subprocess.check_output(['xcrun', '--sdk', 'macosx', '--find', 'clang'], text=True).strip()
-    flags = shlex.join(['-isysroot', sdk_path, '-mmacosx-version-min=12.0'])
     libraries = []
     for architecture in ['arm64', 'amd64']:
+        # Apple Silicon 上交叉编译 Intel slice 时 clang 需要显式 -arch（否则编出 host 架构导致链接失败）。
+        clang_arch = 'arm64' if architecture == 'arm64' else 'x86_64'
+        flags = shlex.join(['-isysroot', sdk_path, '-mmacosx-version-min=12.0', '-arch', clang_arch])
         directory = root / 'native' / 'build' / 'macos' / architecture
         headers = directory / 'Headers'
         headers.mkdir(parents=True, exist_ok=True)

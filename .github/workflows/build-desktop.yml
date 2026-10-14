@@ -1,0 +1,162 @@
+name: Build Windows + macOS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GOPROXY: https://proxy.golang.org,direct
+  GOSUMDB: "off"
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: native/go.mod
+          cache-dependency-path: native/go.sum
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.4'
+          channel: stable
+          cache: true
+
+      - name: Build macOS universal app
+        id: build
+        continue-on-error: true
+        env:
+          GOSUMDB: "off"
+        run: |
+          set -o pipefail
+          python3 scripts/build_macos.py --all-sources 2>&1 | tee build.log
+
+      - name: Save build log (failure)
+        if: always() && steps.build.outcome != 'success'
+        run: |
+          git config user.name "build-bot"
+          git config user.email "build-bot@users.noreply.github.com"
+          git checkout -B "ci-logs-${{ github.run_number }}-macos"
+          cp build.log build-log.txt 2>/dev/null || echo "(no log captured)" > build-log.txt
+          git add -f build-log.txt
+          git commit -m "macOS build log (run ${{ github.run_number }})" || true
+          git push -f origin "ci-logs-${{ github.run_number }}-macos" || true
+
+      - name: Upload artifact (macOS)
+        if: steps.build.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhenguojian-macos
+          path: dist/macos/*.zip
+          retention-days: 30
+
+      - name: Fail if macOS build failed
+        if: steps.build.outcome != 'success'
+        run: exit 1
+
+  build-windows:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: native/go.mod
+          cache-dependency-path: native/go.sum
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.4'
+          channel: stable
+          cache: true
+
+      - name: Setup MinGW-w64
+        uses: egor-tensin/setup-mingw@v2
+        with:
+          platform: x64
+
+      - name: Build Windows package
+        id: build
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          python scripts/build_windows.py --all-sources 2>&1 | tee build.log
+
+      - name: Save build log (failure)
+        if: always() && steps.build.outcome != 'success'
+        shell: bash
+        run: |
+          git config user.name "build-bot"
+          git config user.email "build-bot@users.noreply.github.com"
+          git checkout -B "ci-logs-${{ github.run_number }}-windows"
+          cp build.log build-log.txt 2>/dev/null || echo "(no log captured)" > build-log.txt
+          git add -f build-log.txt
+          git commit -m "Windows build log (run ${{ github.run_number }})" || true
+          git push -f origin "ci-logs-${{ github.run_number }}-windows" || true
+
+      - name: Upload artifact (Windows)
+        if: steps.build.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhenguojian-windows
+          path: dist/windows/*.zip
+          retention-days: 30
+
+      - name: Fail if Windows build failed
+        if: steps.build.outcome != 'success'
+        run: exit 1
+
+  publish:
+    needs: [build-macos, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: "真果鉴 电脑版构建 #${{ github.run_number }}（Windows + macOS）"
+          body: |
+            自动构建产物，两个平台均为**绿色免安装包**，下载解压即用。
+
+            **Windows（10/11，x64）**
+            - 解压后双击 `zhenguojian.exe`
+            - 若被 SmartScreen 拦截：更多信息 → 仍要运行
+
+            **macOS（12+，Apple Silicon / Intel 通用）**
+            - 解压后终端执行一次（去掉网络下载隔离标记）：
+              `xattr -cr zhenguojian.app`
+              然后 `open zhenguojian.app`
+            - 或 Finder 中右键 → 打开（首次）
+
+            通用说明：
+            - 站源解锁：应用左侧「最近观看」连点 6 次 → 点「不使用密码」，共 23 个站源
+            - 播放器控制条带「字幕」按钮：内嵌字幕轨切换 / 外挂字幕文件（srt、ass 等）/ 字幕延迟与字号
+            - 校验：见包内 SHA256SUMS.txt
+          files: artifacts/*.zip
