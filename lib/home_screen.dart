@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'app_layout.dart';
 import 'app_bottom_navigation.dart';
@@ -693,6 +694,23 @@ class _HomeScreenState extends State<HomeScreen> {
     unawaited(showSourceGateDialog(context, widget.store));
   }
 
+  /// 打开外部「更多资源」链接（系统默认浏览器）。
+  static const _resourcesUrl = 'https://link3.cc/haochihc';
+
+  Future<void> _openResources() async {
+    final uri = Uri.parse(_resourcesUrl);
+    try {
+      final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!opened) throw StateError('launch returned false');
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('无法打开链接，请手动访问：$_resourcesUrl')),
+        );
+      }
+    }
+  }
+
   void _cancelSelection() => setState(() {
     _selectionMode = false;
     _selectedDramas.clear();
@@ -946,6 +964,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         ? null
                         : _refreshCatalog,
                   ),
+                IconButton(
+                  key: const ValueKey('more-resources'),
+                  tooltip: '更多资源',
+                  onPressed: _openResources,
+                  icon: const Icon(Icons.card_giftcard_rounded),
+                ),
                 PopupMenuButton<String>(
                   tooltip: '更多',
                   onSelected: (value) {
@@ -984,6 +1008,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         children: [
                           const Text('独立运行，打开即可浏览和播放。观看记录与追剧收藏保存在当前设备。'),
+                          const SizedBox(height: 12),
+                          const Text(
+                            '免责声明\n'
+                            '本应用为第三方聚合客户端，与任何官方应用无关；仅供个人学习、研究与交流使用，请勿用于商业用途或传播倒卖。\n'
+                            '应用本身不存储、不传播任何视频内容，所有内容均来自第三方站点，版权归各权利人所有；请遵守所在地法律法规，因使用本应用产生的一切后果由使用者自行承担。',
+                            style: TextStyle(fontSize: 12, height: 1.5),
+                          ),
                         ],
                       );
                     }
