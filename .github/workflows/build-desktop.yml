@@ -90,17 +90,26 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Setup MinGW-w64
-        uses: egor-tensin/setup-mingw@v2
-        with:
-          platform: x64
-
       - name: Build Windows package
         id: build
         continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
+          # 定位 MinGW-w64 工具链：优先使用镜像自带的 MSYS2，其次常见路径，最后 choco 兜底。
+          if ! command -v x86_64-w64-mingw32-gcc >/dev/null 2>&1; then
+            for d in /c/msys64/mingw64/bin /c/mingw64/bin; do
+              if [ -x "$d/x86_64-w64-mingw32-gcc.exe" ]; then
+                export PATH="$d:$PATH"
+                break
+              fi
+            done
+          fi
+          if ! command -v x86_64-w64-mingw32-gcc >/dev/null 2>&1; then
+            choco install mingw -y --no-progress
+            export PATH="/c/ProgramData/chocolatey/bin:$PATH"
+          fi
+          x86_64-w64-mingw32-gcc --version | head -1
           python scripts/build_windows.py --all-sources 2>&1 | tee build.log
 
       - name: Save build log (failure)
