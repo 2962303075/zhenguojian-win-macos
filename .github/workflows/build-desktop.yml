@@ -16,6 +16,14 @@ jobs:
   build-macos:
     runs-on: macos-latest
     timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - edition: hongguojian
+            arguments: ''
+          - edition: zhenguojian
+            arguments: '--all-sources'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,41 +41,49 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Build macOS universal app
+      - name: Build macOS universal app (${{ matrix.edition }})
         id: build
         continue-on-error: true
         env:
           GOSUMDB: "off"
         run: |
           set -o pipefail
-          python3 scripts/build_macos.py --all-sources 2>&1 | tee build.log
+          python3 scripts/build_macos.py ${{ matrix.arguments }} 2>&1 | tee build.log
 
       - name: Save build log (failure)
         if: always() && steps.build.outcome != 'success'
         run: |
           git config user.name "build-bot"
           git config user.email "build-bot@users.noreply.github.com"
-          git checkout -B "ci-logs-${{ github.run_number }}-macos"
+          git checkout -B "ci-logs-${{ github.run_number }}-${{ matrix.edition }}-macos"
           cp build.log build-log.txt 2>/dev/null || echo "(no log captured)" > build-log.txt
           git add -f build-log.txt
-          git commit -m "macOS build log (run ${{ github.run_number }})" || true
-          git push -f origin "ci-logs-${{ github.run_number }}-macos" || true
+          git commit -m "macOS (${{ matrix.edition }}) build log (run ${{ github.run_number }})" || true
+          git push -f origin "ci-logs-${{ github.run_number }}-${{ matrix.edition }}-macos" || true
 
-      - name: Upload artifact (macOS)
+      - name: Upload artifact (${{ matrix.edition }})
         if: steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: zhenguojian-macos
+          name: ${{ matrix.edition }}-macos
           path: dist/macos/*.zip
           retention-days: 30
 
-      - name: Fail if macOS build failed
+      - name: Fail if ${{ matrix.edition }} macOS build failed
         if: steps.build.outcome != 'success'
         run: exit 1
 
   build-windows:
     runs-on: windows-latest
     timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - edition: hongguojian
+            arguments: ''
+          - edition: zhenguojian
+            arguments: '--all-sources'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -90,7 +106,7 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Build Windows package
+      - name: Build Windows package (${{ matrix.edition }})
         id: build
         continue-on-error: true
         shell: bash
@@ -110,7 +126,7 @@ jobs:
             export PATH="/c/ProgramData/chocolatey/bin:$PATH"
           fi
           x86_64-w64-mingw32-gcc --version | head -1
-          python scripts/build_windows.py --all-sources 2>&1 | tee build.log
+          python scripts/build_windows.py ${{ matrix.arguments }} 2>&1 | tee build.log
 
       - name: Save build log (failure)
         if: always() && steps.build.outcome != 'success'
@@ -118,21 +134,21 @@ jobs:
         run: |
           git config user.name "build-bot"
           git config user.email "build-bot@users.noreply.github.com"
-          git checkout -B "ci-logs-${{ github.run_number }}-windows"
+          git checkout -B "ci-logs-${{ github.run_number }}-${{ matrix.edition }}-windows"
           cp build.log build-log.txt 2>/dev/null || echo "(no log captured)" > build-log.txt
           git add -f build-log.txt
-          git commit -m "Windows build log (run ${{ github.run_number }})" || true
-          git push -f origin "ci-logs-${{ github.run_number }}-windows" || true
+          git commit -m "Windows (${{ matrix.edition }}) build log (run ${{ github.run_number }})" || true
+          git push -f origin "ci-logs-${{ github.run_number }}-${{ matrix.edition }}-windows" || true
 
-      - name: Upload artifact (Windows)
+      - name: Upload artifact (${{ matrix.edition }})
         if: steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: zhenguojian-windows
+          name: ${{ matrix.edition }}-windows
           path: dist/windows/*.zip
           retention-days: 30
 
-      - name: Fail if Windows build failed
+      - name: Fail if ${{ matrix.edition }} Windows build failed
         if: steps.build.outcome != 'success'
         run: exit 1
 
@@ -150,26 +166,30 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
-          name: "真果鉴 电脑版构建 #${{ github.run_number }}（Windows + macOS）"
+          name: "真果鉴 / 红果鉴 电脑版构建 #${{ github.run_number }}（Windows + macOS）"
           body: |
-            自动构建产物，两个平台均为**绿色免安装包**，下载解压即用。
+            自动构建产物：**两个版本 × 两个平台**，均为**绿色免安装包**，下载解压即用。
 
             ---
             **免责声明**：本应用为第三方聚合客户端，与任何官方应用无关；仅供个人学习、研究与交流使用，请勿用于商业用途或传播倒卖。应用本身不存储、不传播任何视频内容，所有内容均来自第三方站点，版权归各自权利人所有；请遵守所在地法律法规，因使用本应用产生的一切后果由使用者自行承担。
             ---
 
+            **版本区别**
+            - `zhenguojian-*`：**真果鉴**（全站源版，23 个站源：红果、韩小圈、鬼片、青空 + 黄豆、剧果、野果、帝果、黄果系列等，密码解锁后全部显示）
+            - `hongguojian-*`：**红果鉴**（仅红果单站源，界面最简）
+
             **Windows（10/11，x64）**
-            - 解压后双击 `zhenguojian.exe`
+            - 解压后双击 `zhenguojian.exe` / `hongguojian.exe`
             - 若被 SmartScreen 拦截：更多信息 → 仍要运行
 
             **macOS（12+，Apple Silicon / Intel 通用）**
             - 解压后终端执行一次（去掉网络下载隔离标记）：
-              `xattr -cr zhenguojian.app`
-              然后 `open zhenguojian.app`
+              `xattr -cr 真果鉴.app`（红果鉴对应 `红果鉴.app`）
+              然后 `open 真果鉴.app`
             - 或 Finder 中右键 → 打开（首次）
 
             通用说明：
-            - 站源解锁：应用左侧「最近观看」连点 6 次 → 点「不使用密码」，共 23 个站源
+            - 站源解锁（真果鉴）：应用左侧「最近观看」连点 6 次 → 点「不使用密码」
             - 播放器控制条带「字幕」按钮：内嵌字幕轨切换 / 外挂字幕文件（srt、ass 等）/ 字幕延迟与字号
             - 顶部「更多资源」按钮：跳转资源聚合页
             - 免责条款亦见应用内「更多 → 关于」对话框
