@@ -11,6 +11,7 @@ import (
 
 type providerMedia struct {
 	credentials *providerMediaCredentials
+	Direct      bool
 	URL         string
 	Referer     string
 	Duration    time.Duration

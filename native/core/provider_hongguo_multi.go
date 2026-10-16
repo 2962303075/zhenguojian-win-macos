@@ -1258,7 +1258,7 @@ func (downloader *Downloader) resolveHongguoMultiMedia(ctx context.Context, vide
 				continue
 			}
 			seen[identity] = true
-			variant := providerMedia{URL: checked, Referer: "https://novelquickapp.com/", CENCKey: key, Quality: row.pixels}
+			variant := providerMedia{Direct: true, URL: checked, Referer: "https://novel.snssdk.com/", CENCKey: key, Quality: row.pixels}
 			variants = append(variants, variant)
 			if selected.URL == "" {
 				selected = variant
@@ -1271,6 +1271,7 @@ func (downloader *Downloader) resolveHongguoMultiMedia(ctx context.Context, vide
 		}
 		return providerMedia{}, errors.New("本集片源地址或密钥无法解析")
 	}
+	selected.Direct = true
 	selected.Variants = variants
 	return selected, nil
 }
