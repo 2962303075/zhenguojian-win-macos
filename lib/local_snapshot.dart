@@ -36,6 +36,7 @@ class LocalSnapshot {
     'sourceGateOff',
     'sourceGateSalt',
     'sourceGateHash',
+    'sourceSwitches',
     'forceLogin',
   };
   final SharedPreferences preferences;
