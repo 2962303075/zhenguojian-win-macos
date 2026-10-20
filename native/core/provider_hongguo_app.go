@@ -69,7 +69,7 @@ func (client *hongguoAppClient) hongguoAppGate(ctx context.Context) error {
 		return ctx.Err()
 	}
 	client.gateMu.Lock()
-	wait := 200*time.Millisecond - time.Since(client.gateLast)
+	wait := 120*time.Millisecond - time.Since(client.gateLast)
 	if wait > 0 {
 		time.Sleep(wait)
 	}

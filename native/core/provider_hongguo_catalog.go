@@ -62,8 +62,8 @@ func (downloader *Downloader) fetchHongguoAppCatalogCategory(ctx context.Context
 	if pageLimit < 1 {
 		pageLimit = defaultConfig().MaxPagesPerSort
 	}
-	if pageLimit > 6 {
-		pageLimit = 6
+	if pageLimit > 3 {
+		pageLimit = 3
 	}
 	headLimit := min(pageLimit, 3)
 	roundLimit := pageLimit
@@ -94,7 +94,7 @@ func (downloader *Downloader) fetchHongguoAppCatalogCategory(ctx context.Context
 	for round := 0; round < roundLimit; round++ {
 		if round > 0 {
 			select {
-			case <-time.After(250 * time.Millisecond):
+			case <-time.After(150 * time.Millisecond):
 			case <-ctx.Done():
 				return dramas, ctx.Err()
 			}
@@ -106,6 +106,9 @@ func (downloader *Downloader) fetchHongguoAppCatalogCategory(ctx context.Context
 				continue
 			}
 			if err := ctx.Err(); err != nil {
+				if len(dramas) > 0 {
+					return dramas, nil
+				}
 				return dramas, err
 			}
 			active = true
@@ -167,6 +170,9 @@ func (downloader *Downloader) fetchHongguoAppCatalogCategory(ctx context.Context
 				}
 			}
 			if err := ctx.Err(); err != nil {
+				if len(dramas) > 0 {
+					return dramas, nil
+				}
 				return dramas, err
 			}
 			if pageErr != nil {
