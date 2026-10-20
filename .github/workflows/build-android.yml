@@ -78,10 +78,10 @@ jobs:
       - name: Create Android Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: android-0.2.74-82
-          name: 真果鉴 Android 手机/电视版 (0.2.74+82)
+          tag_name: android-0.2.74-82-branded
+          name: 甜橙短剧 Android 手机/电视版 (0.2.74+82)
           body: |
-            真果鉴 Android 手机/电视版 APK（红果免登录新协议）
+            甜橙短剧 Android 手机/电视版 APK（红果免登录新协议）
             手机与电视共用同一 APK，应用自动识别电视模式。
             含 arm64-v8a / armeabi-v7a / x86_64 三架构 APK 与 SHA256SUMS.txt。
           files: |
