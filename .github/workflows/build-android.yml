@@ -1,0 +1,63 @@
+name: Build Android
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  GOSUMDB: "off"
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - edition: zhenguojian
+            arguments: --all-sources
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sync app version
+        shell: bash
+        run: |
+          V=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          printf "// 由 CI 依据 pubspec.yaml 生成，请勿手工修改。\nconst appVersion = '%s';\nconst appBuild = %s;\n" "$V" "${V##*+}" > lib/app_version.g.dart
+          cat lib/app_version.g.dart
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: native/go.mod
+          cache-dependency-path: native/go.sum
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.4'
+          channel: stable
+          cache: true
+      - name: Build Android APK (${{ matrix.edition }})
+        id: build
+        run: python3 scripts/build_android.py ${{ matrix.arguments }} --cn-mirrors
+      - name: Upload APK
+        if: steps.build.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.edition }}-android
+          path: |
+            dist/android/*.apk
+            dist/android/SHA256SUMS.txt
+          retention-days: 30
+      - name: Fail if Android build failed
+        if: steps.build.outcome != 'success'
+        run: exit 1
