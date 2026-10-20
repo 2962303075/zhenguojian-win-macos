@@ -62,8 +62,8 @@ func (downloader *Downloader) fetchHongguoAppCatalogCategory(ctx context.Context
 	if pageLimit < 1 {
 		pageLimit = defaultConfig().MaxPagesPerSort
 	}
-	if pageLimit > 200 {
-		pageLimit = 200
+	if pageLimit > 6 {
+		pageLimit = 6
 	}
 	headLimit := min(pageLimit, 3)
 	roundLimit := pageLimit
@@ -92,6 +92,13 @@ func (downloader *Downloader) fetchHongguoAppCatalogCategory(ctx context.Context
 	var dramas []Drama
 	var failures []error
 	for round := 0; round < roundLimit; round++ {
+		if round > 0 {
+			select {
+			case <-time.After(250 * time.Millisecond):
+			case <-ctx.Done():
+				return dramas, ctx.Err()
+			}
+		}
 		active := false
 		for index, genre := range genres {
 			scan := &scans[index]
@@ -103,27 +110,27 @@ func (downloader *Downloader) fetchHongguoAppCatalogCategory(ctx context.Context
 			}
 			active = true
 			cursor := scan.cursor
-			if age := time.Since(cursor.UpdatedAt); age < 0 || age > 30*time.Minute {
-				cursor.SessionID = ""
-			}
+			// 无状态翻页：session_id 续页在 CDN 上会随机返回空包，改为按 offset 直接取页。
+			cursor.SessionID = ""
 			payload := map[string]any{
-				"req_scene": genre.scene, "offset": cursor.Offset, "limit": 18,
+				"req_scene": genre.scene, "offset": cursor.Offset, "limit": 54,
 				"req_type": "only_content", "need_selector_panel": false, "client_req_type": 3,
-				"session_id": cursor.SessionID, "filter_ids": "",
+				"session_id": "", "filter_ids": "",
 				"select_items": map[string]any{
 					"genre": []string{genre.key}, "sort": []string{"online_time"}, "gender": []string{},
 					"category_dim_theme": []string{}, "category_dim_role": []string{}, "category_dim_epoch": []string{},
 					"online_time": []string{}, "creation_status": []string{},
 				},
 			}
-			if cursor.Offset > 0 {
+			if cursor.Offset > 0 && cursor.SessionID != "" {
 				payload["client_req_type"] = 2
 			}
 			var items []Drama
 			var nextCursor hongguoCatalogCursor
 			var pageErr error
 			newItems := 0
-			for attempt := 0; attempt < 2; attempt++ {
+			startLen := len(dramas)
+			for attempt := 0; attempt < 3; attempt++ {
 				result, err := downloader.hongguoAppRequest(ctx, http.MethodPost, "/reading/distribution/category/landpage/v/", nil, payload)
 				retryable := err == nil || cursor.SessionID != ""
 				items = nil
@@ -148,16 +155,24 @@ func (downloader *Downloader) fetchHongguoAppCatalogCategory(ctx context.Context
 				}
 				reportLibraryProgress(ctx, sourceHongguo, items, nil, false)
 				var backoff *requestBackoff
-				if attempt > 0 || !retryable || errors.As(err, &backoff) || ctx.Err() != nil {
+				_ = retryable
+				if errors.As(err, &backoff) || ctx.Err() != nil || attempt == 2 {
 					break
 				}
 				payload["session_id"] = ""
+				select {
+				case <-time.After(time.Duration(attempt+1) * time.Second):
+				case <-ctx.Done():
+					return dramas, ctx.Err()
+				}
 			}
 			if err := ctx.Err(); err != nil {
 				return dramas, err
 			}
 			if pageErr != nil {
-				failures = append(failures, fmt.Errorf("%s: %w", genre.name, pageErr))
+				if len(dramas) == startLen {
+					failures = append(failures, fmt.Errorf("%s: %w", genre.name, pageErr))
+				}
 				scan.done = true
 				continue
 			}

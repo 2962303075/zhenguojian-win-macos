@@ -173,3 +173,110 @@ func TestProbeCategoryViaApp(t *testing.T) {
 		fmt.Printf("[app %s] OK rows=%d hasMore=%v\n", genre.name, len(rows), data["has_more"])
 	}
 }
+
+func TestProbeCategoryOffsets(t *testing.T) {
+	if os.Getenv("HG_PROBE") == "" {
+		t.Skip("probe disabled")
+	}
+	engine, err := newNativeEngine(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	d := engine.downloader
+	ctx, cancel := context.WithTimeout(context.Background(), 180*time.Second)
+	defer cancel()
+	client := d.hongguoClient()
+	for _, offset := range []int{0, 54, 108, 216, 432, 540, 648, 1000} {
+		payload := map[string]any{
+			"req_scene": "comic_series", "offset": offset, "limit": 54,
+			"req_type": "only_content", "need_selector_panel": false, "client_req_type": 3,
+			"session_id": "", "filter_ids": "",
+			"select_items": map[string]any{
+				"genre": []string{"comic_series"}, "sort": []string{"online_time"}, "gender": []string{},
+				"category_dim_theme": []string{}, "category_dim_role": []string{}, "category_dim_epoch": []string{},
+				"online_time": []string{}, "creation_status": []string{},
+			},
+		}
+		result, err := d.hongguoAppRequest(ctx, http.MethodPost, "/reading/distribution/category/landpage/v/", nil, payload)
+		if err != nil {
+			fmt.Printf("[offset=%d] ERR %v\n", offset, err)
+			continue
+		}
+		data := nestedMap(result, "data")
+		fmt.Printf("[offset=%d] rows=%d hasMore=%v next=%v\n", offset, len(anyList(data["video_data"])), data["has_more"], data["next_offset"])
+		_ = client
+	}
+}
+
+func TestProbeCategoryRate(t *testing.T) {
+	if os.Getenv("HG_PROBE") == "" {
+		t.Skip("probe disabled")
+	}
+	engine, err := newNativeEngine(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	d := engine.downloader
+	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Second)
+	defer cancel()
+	payload := func(offset int) map[string]any {
+		return map[string]any{
+			"req_scene": "comic_series", "offset": offset, "limit": 54,
+			"req_type": "only_content", "need_selector_panel": false, "client_req_type": 3,
+			"session_id": "", "filter_ids": "",
+			"select_items": map[string]any{
+				"genre": []string{"comic_series"}, "sort": []string{"online_time"}, "gender": []string{},
+				"category_dim_theme": []string{}, "category_dim_role": []string{}, "category_dim_epoch": []string{},
+				"online_time": []string{}, "creation_status": []string{},
+			},
+		}
+	}
+	for _, spacing := range []time.Duration{0, 400 * time.Millisecond, 800 * time.Millisecond} {
+		ok, fail := 0, 0
+		for i := 0; i < 10; i++ {
+			if spacing > 0 {
+				time.Sleep(spacing)
+			}
+			if _, err := d.hongguoAppRequest(ctx, http.MethodPost, "/reading/distribution/category/landpage/v/", nil, payload(0)); err == nil {
+				ok++
+			} else {
+				fail++
+			}
+		}
+		fmt.Printf("[spacing=%v] ok=%d fail=%d\n", spacing, ok, fail)
+	}
+}
+
+func TestProbeGenreReliability(t *testing.T) {
+	if os.Getenv("HG_PROBE") == "" {
+		t.Skip("probe disabled")
+	}
+	engine, err := newNativeEngine(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	d := engine.downloader
+	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Second)
+	defer cancel()
+	for _, genre := range hongguoAppGenres {
+		ok, fail := 0, 0
+		for i := 0; i < 6; i++ {
+			payload := map[string]any{
+				"req_scene": genre.scene, "offset": 0, "limit": 54,
+				"req_type": "only_content", "need_selector_panel": false, "client_req_type": 3,
+				"session_id": "", "filter_ids": "",
+				"select_items": map[string]any{
+					"genre": []string{genre.key}, "sort": []string{"online_time"}, "gender": []string{},
+					"category_dim_theme": []string{}, "category_dim_role": []string{}, "category_dim_epoch": []string{},
+					"online_time": []string{}, "creation_status": []string{},
+				},
+			}
+			if _, err := d.hongguoAppRequest(ctx, http.MethodPost, "/reading/distribution/category/landpage/v/", nil, payload); err == nil {
+				ok++
+			} else {
+				fail++
+			}
+		}
+		fmt.Printf("[%s scene=%s] ok=%d fail=%d\n", genre.name, genre.scene, ok, fail)
+	}
+}

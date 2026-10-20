@@ -49,6 +49,37 @@ type hongguoAppClient struct {
 	suggestPending map[string]*hongguoSuggestionCall
 	danmaku        map[string]hongguoDanmakuCacheEntry
 	danmakuPending map[string]*hongguoDanmakuCall
+	gate           chan struct{}
+	gateMu         sync.Mutex
+	gateLast       time.Time
+}
+
+// hongguoAppGate 限制对红果 App 接口的并发与频率，避免 CDN 软限流（空响应）。
+func (client *hongguoAppClient) hongguoAppGate(ctx context.Context) error {
+	if client.gate == nil {
+		client.gateMu.Lock()
+		if client.gate == nil {
+			client.gate = make(chan struct{}, 2)
+		}
+		client.gateMu.Unlock()
+	}
+	select {
+	case client.gate <- struct{}{}:
+	case <-ctx.Done():
+		return ctx.Err()
+	}
+	client.gateMu.Lock()
+	wait := 200*time.Millisecond - time.Since(client.gateLast)
+	if wait > 0 {
+		time.Sleep(wait)
+	}
+	client.gateLast = time.Now()
+	client.gateMu.Unlock()
+	return nil
+}
+
+func (client *hongguoAppClient) hongguoAppGateRelease() {
+	<-client.gate
 }
 
 func (downloader *Downloader) hongguoClient() *hongguoAppClient {
@@ -187,6 +218,9 @@ func (downloader *Downloader) hongguoAppRequest(ctx context.Context, method, pat
 		if payload != nil {
 			request.Header.Set("Content-Type", "application/json; charset=utf-8")
 		}
+		if err := client.hongguoAppGate(ctx); err != nil {
+			return nil, err
+		}
 		response, err := downloader.doPreparedCatalogRequest(request, 20*time.Second, func(prepared *http.Request) {
 			now := time.Now()
 			query.Set("_rticket", strconv.FormatInt(now.UnixMilli(), 10))
@@ -198,6 +232,7 @@ func (downloader *Downloader) hongguoAppRequest(ctx context.Context, method, pat
 			}
 		})
 		if err != nil {
+			client.hongguoAppGateRelease()
 			lastErr = err
 			var backoff *requestBackoff
 			if errors.As(err, &backoff) || ctx.Err() != nil {
@@ -207,6 +242,7 @@ func (downloader *Downloader) hongguoAppRequest(ctx context.Context, method, pat
 		}
 		content, readErr := io.ReadAll(io.LimitReader(response.Body, providerMaxBodyBytes+1))
 		response.Body.Close()
+		client.hongguoAppGateRelease()
 		if readErr != nil {
 			lastErr = readErr
 			continue
@@ -219,8 +255,9 @@ func (downloader *Downloader) hongguoAppRequest(ctx context.Context, method, pat
 			continue
 		}
 		if len(content) == 0 || len(content) > providerMaxBodyBytes {
-			lastErr = errors.New("红果 App 接口未返回有效数据")
+		lastErr = errors.New("红果 App 接口未返回有效数据")
 			if len(content) == 0 && attempt+1 < attempts {
+				downloader.client.CloseIdleConnections()
 				continue
 			}
 			return nil, lastErr

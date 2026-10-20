@@ -97,7 +97,7 @@ Future<void> showUpdateDialog(
     builder: (context) {
       final width = MediaQuery.sizeOf(context).width;
       return AlertDialog(
-        title: Text(info.available ? '发现新版本 ${info.version}' : '版本检查'),
+        title: Text(info.available ? '发现新版本 ${info.version}' : '已是最新版本'),
         content: SizedBox(
           width: width < 520 ? width * 0.8 : 460,
           child: SingleChildScrollView(
@@ -112,27 +112,36 @@ Future<void> showUpdateDialog(
                 const SizedBox(height: 12),
                 if (info.error != null)
                   Text(info.error!, style: const TextStyle(fontSize: 13))
-                else if (info.notes.trim().isNotEmpty)
-                  Text(info.notes.trim(), style: const TextStyle(fontSize: 13, height: 1.5))
                 else if (!info.available)
-                  const Text('当前已是最新版本。', style: TextStyle(fontSize: 13)),
+                  Text(
+                    '当前已是最新版本（${info.current}），无需更新。',
+                    style: const TextStyle(fontSize: 13, height: 1.5),
+                  )
+                else if (info.notes.trim().isNotEmpty)
+                  Text(info.notes.trim(), style: const TextStyle(fontSize: 13, height: 1.5)),
               ],
             ),
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, 'later'),
-            child: const Text('稍后'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, 'github'),
-            child: const Text('去 GitHub 下载'),
-          ),
-          if (info.available && Platform.isWindows && info.assetUrl.isNotEmpty)
+          if (info.available) ...[
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'later'),
+              child: const Text('稍后'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'github'),
+              child: const Text('去 GitHub 下载'),
+            ),
+            if (Platform.isWindows && info.assetUrl.isNotEmpty)
+              FilledButton(
+                onPressed: () => Navigator.pop(context, 'update'),
+                child: const Text('立即更新'),
+              ),
+          ] else
             FilledButton(
-              onPressed: () => Navigator.pop(context, 'update'),
-              child: const Text('立即更新'),
+              onPressed: () => Navigator.pop(context, 'close'),
+              child: const Text('知道了'),
             ),
         ],
       );
