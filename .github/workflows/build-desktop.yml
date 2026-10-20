@@ -29,6 +29,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Sync app version
+        shell: bash
         run: |
           V=$(grep '^version:' pubspec.yaml | awk '{print $2}')
           printf "// 由 CI 依据 pubspec.yaml 生成，请勿手工修改。\nconst appVersion = '%s';\nconst appBuild = %s;\n" "$V" "${V##*+}" > lib/app_version.g.dart
@@ -95,6 +96,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Sync app version
+        shell: bash
         run: |
           V=$(grep '^version:' pubspec.yaml | awk '{print $2}')
           printf "// 由 CI 依据 pubspec.yaml 生成，请勿手工修改。\nconst appVersion = '%s';\nconst appBuild = %s;\n" "$V" "${V##*+}" > lib/app_version.g.dart
