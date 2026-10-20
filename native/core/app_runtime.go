@@ -395,6 +395,14 @@ func nativeDispatch(input nativeInput) (any, error) {
 		return engine.nativeResolve(ctx, input)
 	case "danmaku":
 		return engine.nativeDanmaku(ctx, input)
+	case "updateCheck":
+		return engine.updateCheck(ctx, input.Query)
+	case "updateDownload":
+		return engine.updateDownload(input.Query)
+	case "updateStatus":
+		return engine.updateStatusValue(), nil
+	case "updateApply":
+		return engine.updateApply()
 	case "cancelRead":
 		engine.cancelRead(input)
 		return true, nil

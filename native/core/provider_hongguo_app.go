@@ -151,8 +151,8 @@ func (downloader *Downloader) hongguoAppRequest(ctx context.Context, method, pat
 		}
 	}
 	attempts := downloader.cfg.Retries
-	if attempts < 1 {
-		attempts = 1
+	if attempts < 3 {
+		attempts = 3
 	}
 	if attempts > 3 {
 		attempts = 3
@@ -194,7 +194,7 @@ func (downloader *Downloader) hongguoAppRequest(ctx context.Context, method, pat
 			if comment {
 				signHongguoCommentRequest(prepared, commentNonce, now)
 			} else {
-				signHongguoRequest(prepared, body, now)
+				signHongguoPlayerRequest(prepared, body, now, installID)
 			}
 		})
 		if err != nil {
@@ -219,7 +219,11 @@ func (downloader *Downloader) hongguoAppRequest(ctx context.Context, method, pat
 			continue
 		}
 		if len(content) == 0 || len(content) > providerMaxBodyBytes {
-			return nil, errors.New("红果 App 接口未返回有效数据")
+			lastErr = errors.New("红果 App 接口未返回有效数据")
+			if len(content) == 0 && attempt+1 < attempts {
+				continue
+			}
+			return nil, lastErr
 		}
 		var result map[string]any
 		decoder := json.NewDecoder(bytes.NewReader(content))

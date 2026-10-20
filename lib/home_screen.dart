@@ -18,6 +18,7 @@ import 'detail_screen.dart';
 import 'playback_launch_screen.dart';
 import 'downloads_screen.dart';
 import 'local_store.dart';
+import 'updater.dart';
 import 'lan_screen.dart';
 import 'models.dart';
 import 'remote_widgets.dart';
@@ -443,6 +444,9 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       _loading = false;
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) unawaited(maybeAutoCheckUpdate(context, widget.repository));
+    });
   }
 
   @override
@@ -1008,6 +1012,40 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         children: [
                           const Text('独立运行，打开即可浏览和播放。观看记录与追剧收藏保存在当前设备。'),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              TextButton.icon(
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                  final info = await checkForUpdate(
+                                    widget.repository,
+                                  );
+                                  if (!mounted) return;
+                                  if (info == null) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(
+                                          const SnackBar(
+                                            content: Text('检查更新失败，请稍后重试'),
+                                          ),
+                                        );
+                                    return;
+                                  }
+                                  await showUpdateDialog(
+                                    context,
+                                    widget.repository,
+                                    info,
+                                    manual: true,
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.system_update_alt_rounded,
+                                  size: 18,
+                                ),
+                                label: const Text('检查更新'),
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: 12),
                           const Text(
                             '免责声明\n'

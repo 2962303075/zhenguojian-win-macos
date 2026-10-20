@@ -28,6 +28,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Sync app version
+        run: |
+          V=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          printf "// 由 CI 依据 pubspec.yaml 生成，请勿手工修改。\nconst appVersion = '%s';\nconst appBuild = %s;\n" "$V" "${V##*+}" > lib/app_version.g.dart
+          cat lib/app_version.g.dart
+
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -87,6 +93,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Sync app version
+        run: |
+          V=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          printf "// 由 CI 依据 pubspec.yaml 生成，请勿手工修改。\nconst appVersion = '%s';\nconst appBuild = %s;\n" "$V" "${V##*+}" > lib/app_version.g.dart
+          cat lib/app_version.g.dart
 
       - name: Setup Go
         uses: actions/setup-go@v5

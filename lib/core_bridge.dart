@@ -71,6 +71,18 @@ abstract class AppRepository {
     String command,
     Map<String, dynamic> payload,
   ) async => throw AppFailure('当前环境不支持设备互联');
+  Future<Map<String, dynamic>> checkForUpdate(
+    String version,
+    String edition,
+  ) async => throw AppFailure('当前环境不支持在线更新');
+  Future<Map<String, dynamic>> downloadUpdate(
+    String version,
+    String edition,
+  ) async => throw AppFailure('当前环境不支持在线更新');
+  Future<Map<String, dynamic>> updateStatus() async =>
+      const {'state': 'idle'};
+  Future<Map<String, dynamic>> applyUpdate() async =>
+      throw AppFailure('当前环境不支持在线更新');
   Future<PlaybackPlan?> prepareHandoff(
     Drama drama,
     Episode episode, {
@@ -200,6 +212,31 @@ class NativeRepository extends AppRepository {
     String command,
     Map<String, dynamic> payload,
   ) => _call({'action': 'lan', 'command': command, 'lan': payload});
+  @override
+  Future<Map<String, dynamic>> checkForUpdate(
+    String version,
+    String edition,
+  ) => _call({
+    'action': 'updateCheck',
+    'query': jsonEncode({'version': version, 'edition': edition}),
+  });
+
+  @override
+  Future<Map<String, dynamic>> downloadUpdate(
+    String version,
+    String edition,
+  ) => _call({
+    'action': 'updateDownload',
+    'query': jsonEncode({'version': version, 'edition': edition}),
+  });
+
+  @override
+  Future<Map<String, dynamic>> updateStatus() =>
+      _call({'action': 'updateStatus'});
+
+  @override
+  Future<Map<String, dynamic>> applyUpdate() =>
+      _call({'action': 'updateApply'});
 
   @override
   Future<PlaybackPlan?> prepareHandoff(
