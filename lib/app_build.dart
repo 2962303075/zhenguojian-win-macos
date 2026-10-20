@@ -1,3 +1,3 @@
 const allSourcesEnabled = bool.fromEnvironment('ALL_SOURCES');
-const appName = allSourcesEnabled ? '真果鉴' : '红果鉴';
+const appName = '甜橙短剧';
 const appSlug = allSourcesEnabled ? 'zhenguojian' : 'hongguojian';
