@@ -207,7 +207,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
-          name: "真果鉴 / 红果鉴 电脑版构建 #${{ github.run_number }}（Windows + macOS）"
+          name: "甜橙短剧 电脑版构建 #${{ github.run_number }}（Windows + macOS）"
           body_path: release-body.md
           files: artifacts/*.zip
           fail_on_unmatched_files: false
