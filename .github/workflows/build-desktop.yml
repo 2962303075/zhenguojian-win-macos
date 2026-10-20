@@ -168,6 +168,7 @@ jobs:
 
   publish:
     needs: [build-macos, build-windows]
+    if: always() && needs.build-windows.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
@@ -175,9 +176,18 @@ jobs:
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           path: artifacts
           merge-multiple: true
+
+      - name: Verify artifacts
+        run: |
+          mkdir -p artifacts
+          ls -lh artifacts || true
+          count=$(ls artifacts/*.zip 2>/dev/null | wc -l)
+          echo "artifact zips: $count"
+          if [ "$count" -lt 2 ]; then echo "产物不足（$count 个），跳过发布"; exit 1; fi
 
       - name: Compose release body
         run: |
@@ -200,3 +210,4 @@ jobs:
           name: "真果鉴 / 红果鉴 电脑版构建 #${{ github.run_number }}（Windows + macOS）"
           body_path: release-body.md
           files: artifacts/*.zip
+          fail_on_unmatched_files: false
