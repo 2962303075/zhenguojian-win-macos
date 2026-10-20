@@ -699,7 +699,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// 打开外部「更多资源」链接（系统默认浏览器）。
-  static const _resourcesUrl = 'https://link3.cc/haochihc';
+  static const _resourcesUrl = 'https://www.29sml.cn';
 
   Future<void> _openResources() async {
     final uri = Uri.parse(_resourcesUrl);
