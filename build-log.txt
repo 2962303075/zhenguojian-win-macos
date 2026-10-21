@@ -1,0 +1,183 @@
+Building native/build/macos/arm64/libDuanjuCore.a
+Building native/build/macos/amd64/libDuanjuCore.a
+xcframework successfully written out to: /Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/DuanjuCore/DuanjuCore.xcframework
+DuanjuCore.xcframework 就绪：/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/DuanjuCore/DuanjuCore.xcframework
+Resolving dependencies...
+Downloading packages...
+  android_file_picker 2.1.0 (2.1.1 available)
+  code_assets 1.2.1 (2.1.0 available)
+  cross_file 0.3.5+5 (0.4.0 available)
+  ffmpeg_kit_flutter_new_min_gpl 2.6.2 (2.6.7 available)
+  file_picker_darwin 2.3.0 (2.3.2 available)
+  file_picker_web 4.1.0 (4.2.0 available)
+  hooks 2.0.2 (2.2.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+* media_kit_libs_windows_video 1.0.11 (was 1.0.11+duanju.1 from path packages/media_kit_libs_windows_video)
+  meta 1.18.3 (1.19.0 available)
+  objective_c 9.5.0 (9.6.2 available)
+  petitparser 7.0.2 (7.1.0 available)
+  record_use 0.6.0 (1.1.1 available)
+  screen_retriever 0.2.2 (0.3.0 available)
+  shared_preferences_android 2.4.28 (2.5.1 available)
+  shared_preferences_foundation 2.5.7 (2.6.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.3 available)
+  vm_service 15.3.0 (15.4.0 available)
+  xml 7.0.1 (7.1.0 available)
+Changed 1 dependency!
+19 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Analyzing dependencies
+make: Nothing to be done for `all'.
+make: Nothing to be done for `all'.
+media_kit: INFO: package:media_kit_libs_macos_video found
+Adding spec repo `trunk` with CDN `https://cdn.cocoapods.org/`
+Downloading dependencies
+Installing DuanjuCore (0.2.0)
+Installing FlutterMacOS (1.0.0)
+Installing ffmpeg_kit_flutter_new_min_gpl (8.1.2)
+Installing file_picker_darwin (1.0.0)
+Installing media_kit_libs_macos_video (1.0.4)
+Installing media_kit_video (0.0.1)
+Installing nsd_macos (0.0.1)
+Installing package_info_plus (0.0.1)
+Installing screen_retriever_macos (0.0.1)
+Installing shared_preferences_foundation (0.0.1)
+Installing url_launcher_macos (0.0.1)
+Installing video_player_avfoundation (0.0.1)
+Installing wakelock_plus (0.0.1)
+Installing window_manager (0.5.0)
+Generating Pods project
+Integrating client project
+Pod installation complete! There are 14 dependencies from the Podfile and 14 total pods installed.
+
+[!] CocoaPods did not set the base configuration of your project because your project already has a custom config set. In order for CocoaPods integration to work at all, please either set the base configurations of the target `Runner` to `Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig` or include the `Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig` in your build configuration (`Runner/Configs/AppInfo.xcconfig`).
+
+[!] CocoaPods did not set the base configuration of your project because your project already has a custom config set. In order for CocoaPods integration to work at all, please either set the base configurations of the target `Runner` to `Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig` or include the `Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig` in your build configuration (`Runner/Configs/AppInfo.xcconfig`).
+
+[!] CocoaPods did not set the base configuration of your project because your project already has a custom config set. In order for CocoaPods integration to work at all, please either set the base configurations of the target `Runner` to `Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig` or include the `Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig` in your build configuration (`Runner/Configs/AppInfo.xcconfig`).
+The following plugins do not support Swift Package Manager for macos:
+  - media_kit_libs_macos_video
+  - media_kit_video
+This will become an error in a future version of Flutter. Please contact the plugin maintainers to request Swift Package Manager adoption.
+Running pod install...                                           1,412ms
+Building macOS application...                                   
+1 | #import "Headers/video_player_avfoundation-umbrella.h"
+2 | 
+
+13 | #import "AVAssetTrackUtils.h"
+14 | #import "FVPAssetProvider.h"
+15 | #import "FVPAVFactory.h"
+16 | #import "FVPDisplayLink.h"
+17 | #import "FVPEventBridge.h"
+
+1 warning generated.
+/Users/runner/.pub-cache/hosted/pub.dev/video_player_avfoundation-2.12.1/darwin/video_player_avfoundation/Sources/video_player_avfoundation_objc/include/video_player_avfoundation_objc/FVPAVFactory.h:38:4: warning: 'AVKeyValueStatus' is deprecated: first deprecated in macOS 13.0 - Use AVAsyncProperty.Status instead
+ 36 | 
+ 37 | /// Wraps the underlying asset's statusOfValueForKey:error: method.
+ 38 | - (AVKeyValueStatus)statusOfValueForKey:(NSString *)key
+    |    `- warning: 'AVKeyValueStatus' is deprecated: first deprecated in macOS 13.0 - Use AVAsyncProperty.Status instead
+ 39 |                                   error:(NSError *_Nullable *_Nullable)outError;
+ 40 | 
+
+14 | NS_ASSUME_NONNULL_BEGIN
+15 | 
+16 | typedef NS_ENUM(NSInteger, AVKeyValueStatus) {
+17 | 	AVKeyValueStatusUnknown = 0,
+18 | 	AVKeyValueStatusLoading = 1,
+/Users/runner/.pub-cache/hosted/pub.dev/video_player_avfoundation-2.12.1/darwin/video_player_avfoundation/Sources/video_player_avfoundation/NativeVideoViewFactory.swift:53:8: warning: result of 'createArgsCodec()' has different optionality than expected by protocol 'FlutterPlatformViewFactory'
+  func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
+       ^
+                                                                  ?
+optional func createArgsCodec() -> (any FlutterMessageCodec & NSObjectProtocol)?}
+              ^
+1 | #import "Headers/video_player_avfoundation-umbrella.h"
+2 | 
+
+13 | #import "AVAssetTrackUtils.h"
+14 | #import "FVPAssetProvider.h"
+15 | #import "FVPAVFactory.h"
+16 | #import "FVPDisplayLink.h"
+17 | #import "FVPEventBridge.h"
+
+1 warning generated.
+/Users/runner/.pub-cache/hosted/pub.dev/video_player_avfoundation-2.12.1/darwin/video_player_avfoundation/Sources/video_player_avfoundation_objc/include/video_player_avfoundation_objc/FVPAVFactory.h:38:4: warning: 'AVKeyValueStatus' is deprecated: first deprecated in macOS 13.0 - Use AVAsyncProperty.Status instead
+ 36 | 
+ 37 | /// Wraps the underlying asset's statusOfValueForKey:error: method.
+ 38 | - (AVKeyValueStatus)statusOfValueForKey:(NSString *)key
+    |    `- warning: 'AVKeyValueStatus' is deprecated: first deprecated in macOS 13.0 - Use AVAsyncProperty.Status instead
+ 39 |                                   error:(NSError *_Nullable *_Nullable)outError;
+ 40 | 
+
+14 | NS_ASSUME_NONNULL_BEGIN
+15 | 
+16 | typedef NS_ENUM(NSInteger, AVKeyValueStatus) {
+17 | 	AVKeyValueStatusUnknown = 0,
+18 | 	AVKeyValueStatusLoading = 1,
+/Users/runner/.pub-cache/hosted/pub.dev/video_player_avfoundation-2.12.1/darwin/video_player_avfoundation/Sources/video_player_avfoundation/NativeVideoViewFactory.swift:53:8: warning: result of 'createArgsCodec()' has different optionality than expected by protocol 'FlutterPlatformViewFactory'
+  func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
+       ^
+                                                                  ?
+optional func createArgsCodec() -> (any FlutterMessageCodec & NSObjectProtocol)?}
+              ^
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: window_manager: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: window_manager: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: wakelock_plus: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: wakelock_plus: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: video_player_avfoundation: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: url_launcher_macos: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: url_launcher_macos: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: video_player_avfoundation: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: shared_preferences_foundation: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: shared_preferences_foundation: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: screen_retriever_macos: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: screen_retriever_macos: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: nsd_macos: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: nsd_macos: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: media_kit_libs_macos_video: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: media_kit_libs_macos_video: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: file_picker_darwin: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: file_picker_darwin: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: media_kit_video: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/Pods/Pods.xcodeproj: media_kit_video: ld: warning: search path '/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.S9o1IK/Metal.xctoolchain/usr/lib/swift/macosx' not found
+lib/stats_tracker.dart:41:15: Error: The getter 'headers' isn't defined for the type 'Future<HttpClientRequest>'.
+ - 'Future' is from 'dart:async'.
+ - 'HttpClientRequest' is from 'dart:_http'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'headers'.
+      request.headers.contentType = ContentType.json;
+              ^^^^^^^
+lib/stats_tracker.dart:42:15: Error: The method 'add' isn't defined for the type 'Future<HttpClientRequest>'.
+ - 'Future' is from 'dart:async'.
+ - 'HttpClientRequest' is from 'dart:_http'.
+Try correcting the name to the name of an existing method, or defining a method named 'add'.
+      request.add(
+              ^^^
+lib/stats_tracker.dart:52:15: Error: The method 'close' isn't defined for the type 'Future<HttpClientRequest>'.
+ - 'Future' is from 'dart:async'.
+ - 'HttpClientRequest' is from 'dart:_http'.
+Try correcting the name to the name of an existing method, or defining a method named 'close'.
+      request.close().then((response) {
+              ^^^^^
+Target kernel_snapshot_program failed: Exception
+Failed to package /Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos.
+Command PhaseScriptExecution failed with a nonzero exit code
+warning: Run script build phase 'Run Script' will be run during every build because it does not specify any outputs. To address this issue, either add output dependencies to the script phase, or configure it to run in every build by unchecking "Based on dependency analysis" in the script phase. (in target 'Flutter Assemble' from project 'Runner')
+** BUILD FAILED **
+
+Build process failed
+Traceback (most recent call last):
+  File "/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/scripts/build_macos.py", line 159, in <module>
+    main()
+    ~~~~^^
+  File "/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/scripts/build_macos.py", line 129, in main
+    run([flutter, 'build', 'macos', '--release', '--no-pub', *variant.flutter_arguments],
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        env=environment)
+        ^^^^^^^^^^^^^^^^
+  File "/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/scripts/build_macos.py", line 37, in run
+    subprocess.run(arguments, cwd=kwargs.pop('cwd', root), check=True, **kwargs)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/lib/python3.15/subprocess.py", line 692, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['/Users/runner/hostedtoolcache/flutter/stable-3.47.4-arm64/flutter/bin/flutter', 'build', 'macos', '--release', '--no-pub', '--dart-define=ALL_SOURCES=true']' returned non-zero exit status 1.
