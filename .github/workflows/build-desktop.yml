@@ -154,12 +154,39 @@ jobs:
           git commit -m "Windows (${{ matrix.edition }}) build log (run ${{ github.run_number }})" || true
           git push -f origin "ci-logs-${{ github.run_number }}-${{ matrix.edition }}-windows" || true
 
+      - name: Build installer (zhenguojian only)
+        if: steps.build.outcome == 'success' && matrix.edition == 'zhenguojian'
+        shell: pwsh
+        run: |
+          choco install innosetup -y --no-progress
+          $ErrorActionPreference = 'Stop'
+          # 外层产物 zip -> 解压找到内层应用 zip -> 解压到 dist\windows\app
+          $outer = Get-ChildItem dist\windows\*.zip | Where-Object { $_.Name -match 'zhenguojian' } | Select-Object -First 1
+          Write-Host "outer zip: $($outer.FullName)"
+          New-Item -ItemType Directory -Force -Path dist\windows\installer-src | Out-Null
+          Expand-Archive -LiteralPath $outer.FullName -DestinationPath dist\windows\installer-src -Force
+          $inner = Get-ChildItem dist\windows\installer-src\*.zip | Select-Object -First 1
+          Write-Host "inner zip: $($inner.FullName)"
+          New-Item -ItemType Directory -Force -Path dist\windows\app | Out-Null
+          Expand-Archive -LiteralPath $inner.FullName -DestinationPath dist\windows\app -Force
+          Get-ChildItem dist\windows\app | Select-Object -First 5 | ForEach-Object { $_.Name }
+          # 编译安装程序
+          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            $iscc = (Get-ChildItem "C:\Program Files*\Inno Setup*\ISCC.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1).FullName
+          }
+          Write-Host "ISCC: $iscc"
+          & $iscc "installer\windows.iss"
+          Get-ChildItem dist\windows\installer\*.exe -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "installer: $($_.FullName) $($_.Length)" }
+
       - name: Upload artifact (${{ matrix.edition }})
         if: steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.edition }}-windows
-          path: dist/windows/*.zip
+          path: |
+            dist/windows/*.zip
+            dist/windows/installer/*.exe
           retention-days: 30
 
       - name: Fail if ${{ matrix.edition }} Windows build failed
@@ -167,7 +194,7 @@ jobs:
         run: exit 1
 
   publish:
-    needs: [build-macos, build-windows]
+    needs: build-windows
     if: always() && needs.build-windows.result == 'success'
     runs-on: ubuntu-latest
     steps:
@@ -185,9 +212,9 @@ jobs:
         run: |
           mkdir -p artifacts
           ls -lh artifacts || true
-          count=$(ls artifacts/*.zip 2>/dev/null | wc -l)
-          echo "artifact zips: $count"
-          if [ "$count" -lt 2 ]; then echo "产物不足（$count 个），跳过发布"; exit 1; fi
+          count=$(ls artifacts/*.zip artifacts/*.exe 2>/dev/null | wc -l)
+          echo "artifact files: $count"
+          if [ "$count" -lt 1 ]; then echo "无产物，跳过发布"; exit 1; fi
 
       - name: Compose release body
         run: |
@@ -209,5 +236,8 @@ jobs:
           tag_name: build-${{ github.run_number }}
           name: "甜橙短剧 电脑版构建 #${{ github.run_number }}（Windows + macOS）"
           body_path: release-body.md
-          files: artifacts/*.zip
+          files: |
+            artifacts/*.zip
+            artifacts/*.exe
+          overwrite: true
           fail_on_unmatched_files: false
