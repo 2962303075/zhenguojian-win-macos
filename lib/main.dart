@@ -12,6 +12,8 @@ import 'core_bridge.dart';
 import 'app_layout.dart';
 import 'app_orientation.dart';
 import 'app_theme.dart';
+import 'app_build.dart';
+import 'stats_tracker.dart';
 import 'home_screen.dart';
 import 'local_store.dart';
 import 'profiles_screen.dart';
@@ -114,6 +116,13 @@ class _AppBootstrapState extends State<AppBootstrap>
     });
     try {
       final preferences = await SharedPreferences.getInstance();
+      // 统计埋点：启动上报（异步静默，不影响功能）
+      unawaited(StatsTracker.deviceId().then((_) {
+        StatsTracker.trackLaunch(
+          platform: Platform.operatingSystem,
+          version: appVersion,
+        );
+      }));
       await _refreshDevice();
       await repository.initialize();
       if (mounted) {
