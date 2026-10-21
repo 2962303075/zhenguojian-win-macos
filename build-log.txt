@@ -1,0 +1,29 @@
+Building native/build/macos/arm64/libDuanjuCore.a
+Building native/build/macos/amd64/libDuanjuCore.a
+xcframework successfully written out to: /Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/DuanjuCore/DuanjuCore.xcframework
+DuanjuCore.xcframework 就绪：/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/DuanjuCore/DuanjuCore.xcframework
+Resolving dependencies...
+Failed parsing lock file:
+
+Error on line 431, column 3 of pubspec.lock: Duplicate mapping key.
+    ╷
+431 │   media_kit_libs_android_video:
+    │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ╵
+
+Consider deleting the file and running `flutter pub get` to recreate it.
+Failed to update packages.
+Traceback (most recent call last):
+  File "/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/scripts/build_macos.py", line 159, in <module>
+    main()
+    ~~~~^^
+  File "/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/scripts/build_macos.py", line 127, in main
+    run([flutter, 'pub', 'get'], env=environment)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/scripts/build_macos.py", line 37, in run
+    subprocess.run(arguments, cwd=kwargs.pop('cwd', root), check=True, **kwargs)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/lib/python3.15/subprocess.py", line 692, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['/Users/runner/hostedtoolcache/flutter/stable-3.47.4-arm64/flutter/bin/flutter', 'pub', 'get']' returned non-zero exit status 65.
