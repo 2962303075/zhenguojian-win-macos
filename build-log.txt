@@ -1,0 +1,18 @@
+Building windows\runner\duanju_core.dll
+Resolving dependencies...
+Failed parsing lock file:
+
+Error on line 431, column 3 of pubspec.lock: Duplicate mapping key.
+    ╷
+431 │   media_kit_libs_android_video:
+    │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ╵
+
+Consider deleting the file and running `flutter pub get` to recreate it.
+Failed to update packages.
+Traceback (most recent call last):
+  File "D:\a\zhenguojian-win-macos\zhenguojian-win-macos\scripts\build_windows.py", line 27, in <module>
+    subprocess.run([flutter, 'pub', 'get', '--enforce-lockfile'], cwd=root, env=env, check=True)
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['C:\\hostedtoolcache\\windows\\flutter\\stable-3.47.4-x64/flutter/bin\\flutter.BAT', 'pub', 'get', '--enforce-lockfile']' returned non-zero exit status 65.
