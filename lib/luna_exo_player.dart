@@ -27,6 +27,9 @@ class LunaPlayerStreams implements PlayerStream {
   Stream<Duration> get position => positionController.stream;
 
   @override
+  Stream<Tracks> get tracks => const Stream<Tracks>.empty();
+
+  @override
   Stream<Duration> get duration => durationController.stream;
 
   @override
