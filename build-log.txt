@@ -1,0 +1,39 @@
+Building windows\runner\duanju_core.dll
+Resolving dependencies...
+Downloading packages...
+  android_file_picker 2.1.0 (2.1.1 available)
+  code_assets 1.2.1 (2.1.0 available)
+  cross_file 0.3.5+5 (0.4.0 available)
+  ffmpeg_kit_flutter_new_min_gpl 2.6.2 (2.6.7 available)
+  file_picker_darwin 2.3.0 (2.3.2 available)
+  file_picker_web 4.1.0 (4.2.0 available)
+  hooks 2.0.2 (2.2.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+! media_kit_libs_windows_video 1.0.11+duanju.1 from path packages\media_kit_libs_windows_video (overridden)
+  meta 1.18.3 (1.19.0 available)
+  objective_c 9.5.0 (9.6.2 available)
+  petitparser 7.0.2 (7.1.0 available)
+  record_use 0.6.0 (1.1.1 available)
+  screen_retriever 0.2.2 (0.3.0 available)
+  shared_preferences_android 2.4.28 (2.5.1 available)
+  shared_preferences_foundation 2.5.7 (2.6.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.3 available)
+  vm_service 15.3.0 (15.4.0 available)
+  xml 7.0.1 (7.1.0 available)
+Got dependencies!
+19 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Building Windows application...                                 
+lib/stats_tracker.dart(41,15): error G4127D1E8: The getter 'headers' isn't defined for the type 'Future<HttpClientRequest>'. [D:\a\zhenguojian-win-macos\zhenguojian-win-macos\build\windows\x64\flutter\flutter_assemble.vcxproj]
+lib/stats_tracker.dart(42,15): error GE5CFE876: The method 'add' isn't defined for the type 'Future<HttpClientRequest>'. [D:\a\zhenguojian-win-macos\zhenguojian-win-macos\build\windows\x64\flutter\flutter_assemble.vcxproj]
+lib/stats_tracker.dart(52,15): error GE5CFE876: The method 'close' isn't defined for the type 'Future<HttpClientRequest>'. [D:\a\zhenguojian-win-macos\zhenguojian-win-macos\build\windows\x64\flutter\flutter_assemble.vcxproj]
+C:\Program Files\Microsoft Visual Studio\18\Enterprise\MSBuild\Microsoft\VC\v180\Microsoft.CppCommon.targets(254,5): error MSB8066: Custom build for 'D:\a\zhenguojian-win-macos\zhenguojian-win-macos\build\windows\x64\CMakeFiles\0f2e9f06a76caede53f685caf0f0f129\flutter_windows.dll.rule;D:\a\zhenguojian-win-macos\zhenguojian-win-macos\build\windows\x64\CMakeFiles\e412c890729fd7c7fc7529fc4d8db7ab\flutter_assemble.rule;D:\a\zhenguojian-win-macos\zhenguojian-win-macos\windows\flutter\CMakeLists.txt' exited with code 1. [D:\a\zhenguojian-win-macos\zhenguojian-win-macos\build\windows\x64\flutter\flutter_assemble.vcxproj]
+Building Windows application...                                    36.5s
+Build process failed.
+Traceback (most recent call last):
+  File "D:\a\zhenguojian-win-macos\zhenguojian-win-macos\scripts\build_windows.py", line 28, in <module>
+    subprocess.run([flutter, 'build', 'windows', '--release', '--no-pub', *variant.flutter_arguments], cwd=root, env=env, check=True)
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['C:\\hostedtoolcache\\windows\\flutter\\stable-3.47.4-x64/flutter/bin\\flutter.BAT', 'build', 'windows', '--release', '--no-pub', '--dart-define=ALL_SOURCES=false']' returned non-zero exit status 1.
