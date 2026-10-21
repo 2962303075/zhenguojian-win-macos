@@ -37,31 +37,36 @@ abstract final class StatsTracker {
     try {
       final client = HttpClient()
         ..connectionTimeout = const Duration(seconds: 3);
-      final request = client.postUrl(Uri.parse(_endpoint));
-      request.headers.contentType = ContentType.json;
-      request.add(
-        utf8.encode(
-          jsonEncode({
-            'device_id': id,
-            'platform': platform,
-            'version': version,
-            'event': 'launch',
-          }),
-        ),
-      );
-      request.close().then((response) {
-        response
-            .drain<void>()
-            .then((_) {
-              try {
-                client.close();
-              } catch (_) {}
-            })
-            .catchError((Object _) {
-              try {
-                client.close();
-              } catch (_) {}
-            });
+      client.postUrl(Uri.parse(_endpoint)).then((request) {
+        request.headers.contentType = ContentType.json;
+        request.add(
+          utf8.encode(
+            jsonEncode({
+              'device_id': id,
+              'platform': platform,
+              'version': version,
+              'event': 'launch',
+            }),
+          ),
+        );
+        request.close().then((response) {
+          response
+              .drain<void>()
+              .then((_) {
+                try {
+                  client.close();
+                } catch (_) {}
+              })
+              .catchError((Object _) {
+                try {
+                  client.close();
+                } catch (_) {}
+              });
+        }).catchError((Object _) {
+          try {
+            client.close();
+          } catch (_) {}
+        });
       }).catchError((Object _) {
         try {
           client.close();
