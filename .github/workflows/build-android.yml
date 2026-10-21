@@ -87,5 +87,6 @@ jobs:
           files: |
             dist/android/*.apk
             dist/android/SHA256SUMS.txt
+          overwrite: true
           draft: false
           prerelease: false
