@@ -663,7 +663,7 @@ func (engine *nativeEngine) nativeCatalog(ctx context.Context, input nativeInput
 			items, err = d.fetchHongguoAppCatalogCategory(ctx, category)
 			if err != nil {
 				client.mu.Lock()
-				client.categoryBlockedUntil = time.Now().Add(5 * time.Minute)
+				client.categoryBlockedUntil = time.Now().Add(10 * time.Minute)
 				client.mu.Unlock()
 			}
 		}
