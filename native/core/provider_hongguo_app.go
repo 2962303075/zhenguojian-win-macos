@@ -206,7 +206,7 @@ func (downloader *Downloader) hongguoAppRequest(ctx context.Context, method, pat
 	for attempt := 0; attempt < attempts; attempt++ {
 		if attempt > 0 {
 			select {
-			case <-time.After(time.Duration(attempt) * time.Second):
+			case <-time.After(time.Duration(attempt) * 500 * time.Millisecond):
 			case <-ctx.Done():
 				return nil, ctx.Err()
 			}
