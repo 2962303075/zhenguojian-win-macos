@@ -160,16 +160,12 @@ jobs:
         run: |
           choco install innosetup -y --no-progress
           $ErrorActionPreference = 'Stop'
-          # 外层产物 zip -> 解压找到内层应用 zip -> 解压到 dist\windows\app
+          # 外层产物 zip 本身就是应用包（exe+dll+data），直接解压
           $outer = Get-ChildItem dist\windows\*.zip | Where-Object { $_.Name -match 'zhenguojian' } | Select-Object -First 1
           Write-Host "outer zip: $($outer.FullName)"
-          New-Item -ItemType Directory -Force -Path dist\windows\installer-src | Out-Null
-          Expand-Archive -LiteralPath $outer.FullName -DestinationPath dist\windows\installer-src -Force
-          $inner = Get-ChildItem dist\windows\installer-src\*.zip | Select-Object -First 1
-          Write-Host "inner zip: $($inner.FullName)"
           New-Item -ItemType Directory -Force -Path dist\windows\app | Out-Null
-          Expand-Archive -LiteralPath $inner.FullName -DestinationPath dist\windows\app -Force
-          Get-ChildItem dist\windows\app | Select-Object -First 5 | ForEach-Object { $_.Name }
+          Expand-Archive -LiteralPath $outer.FullName -DestinationPath dist\windows\app -Force
+          Get-ChildItem dist\windows\app | Select-Object -First 8 | ForEach-Object { $_.Name }
           # 编译安装程序
           $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
           if (-not (Test-Path $iscc)) {
@@ -177,7 +173,7 @@ jobs:
           }
           Write-Host "ISCC: $iscc"
           & $iscc "installer\windows.iss"
-          Get-ChildItem dist\windows\installer\*.exe -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "installer: $($_.FullName) $($_.Length)" }
+          Get-ChildItem dist\windows\installer\*.exe -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "installer: $($_.Name) $($_.Length)" }
 
       - name: Upload artifact (${{ matrix.edition }})
         if: steps.build.outcome == 'success'
@@ -211,6 +207,8 @@ jobs:
       - name: Verify artifacts
         run: |
           mkdir -p artifacts
+          # 展平：把子目录中的 zip/exe 拷到 artifacts 根，保证发布 glob 能匹配
+          find artifacts -type f \( -name '*.zip' -o -name '*.exe' \) -exec cp -n {} artifacts/ \; 2>/dev/null || true
           ls -lh artifacts || true
           count=$(ls artifacts/*.zip artifacts/*.exe 2>/dev/null | wc -l)
           echo "artifact files: $count"
