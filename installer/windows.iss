@@ -1,6 +1,6 @@
-﻿; 甜橙短剧 Windows 一键安装包脚本（Inno Setup）
+; 甜橙短剧 Windows 一键安装包脚本（Inno Setup）
 #define MyAppName "甜橙短剧"
-#define MyAppVersion "0.2.76+84"
+#define MyAppVersion "0.2.79+87"
 #define MyAppExeName "zhenguojian.exe"
 
 [Setup]
