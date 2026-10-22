@@ -207,6 +207,8 @@ jobs:
       - name: Verify artifacts
         run: |
           mkdir -p artifacts
+          # 展平：把子目录中的 zip/exe 拷到 artifacts 根，保证发布 glob 能匹配
+          find artifacts -type f \( -name '*.zip' -o -name '*.exe' \) -exec cp -n {} artifacts/ \; 2>/dev/null || true
           ls -lh artifacts || true
           count=$(ls artifacts/*.zip artifacts/*.exe 2>/dev/null | wc -l)
           echo "artifact files: $count"
