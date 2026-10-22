@@ -33,7 +33,7 @@ class UpdateInfo {
     current: '${json['current'] ?? appVersion}',
     version: '${json['version'] ?? ''}',
     notes: '${json['notes'] ?? ''}',
-    pageUrl: '${json['pageUrl'] ?? 'https://github.com/vjc9wrh9r9-boop/zhenguojian-win-macos/releases/latest'}',
+    pageUrl: '${json['pageUrl'] ?? 'https://duanju.29sml.cn/'}',
     assetUrl: '${json['assetUrl'] ?? ''}',
     error: json['error'] == null ? null : '${json['error']}',
   );
@@ -131,7 +131,7 @@ Future<void> showUpdateDialog(
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, 'github'),
-              child: const Text('去 GitHub 下载'),
+              child: const Text('前往官网下载'),
             ),
             if (Platform.isWindows && info.assetUrl.isNotEmpty)
               FilledButton(
@@ -242,7 +242,7 @@ Future<void> _runDownload(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('更新未完成'),
-          content: Text('$error\n\n可前往 GitHub 手动下载最新版本。'),
+          content: Text('$error\n\n可前往官网手动下载最新版本。'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -253,7 +253,7 @@ Future<void> _runDownload(
                 Navigator.pop(context);
                 await launchUrl(Uri.parse(info.pageUrl), mode: LaunchMode.externalApplication);
               },
-              child: const Text('去 GitHub 下载'),
+              child: const Text('前往官网下载'),
             ),
           ],
         ),
