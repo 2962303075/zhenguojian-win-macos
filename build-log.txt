@@ -1,0 +1,68 @@
+Building native/build/macos/arm64/libDuanjuCore.a
+Building native/build/macos/amd64/libDuanjuCore.a
+xcframework successfully written out to: /Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/DuanjuCore/DuanjuCore.xcframework
+DuanjuCore.xcframework 就绪：/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/macos/DuanjuCore/DuanjuCore.xcframework
+Resolving dependencies...
+Downloading packages...
+  android_file_picker 2.1.0 (2.1.1 available)
+  code_assets 1.2.1 (2.1.0 available)
+  cross_file 0.3.5+5 (0.4.0 available)
+  ffmpeg_kit_flutter_new_min_gpl 2.6.2 (2.6.7 available)
+  file_picker_darwin 2.3.0 (2.3.2 available)
+  file_picker_web 4.1.0 (4.2.0 available)
+  hooks 2.0.2 (2.2.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+* media_kit_libs_windows_video 1.0.11 (was 1.0.11+duanju.1 from path packages/media_kit_libs_windows_video)
+  meta 1.18.3 (1.19.0 available)
+  objective_c 9.5.0 (9.6.2 available)
+  petitparser 7.0.2 (7.1.0 available)
+  record_use 0.6.0 (1.1.1 available)
+  screen_retriever 0.2.2 (0.3.0 available)
+  shared_preferences_android 2.4.28 (2.5.1 available)
+  shared_preferences_foundation 2.5.7 (2.6.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.3 available)
+  vm_service 15.3.0 (15.4.0 available)
+  xml 7.0.1 (7.1.0 available)
+Changed 1 dependency!
+19 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Analyzing dependencies
+make: Nothing to be done for `all'.
+make: Nothing to be done for `all'.
+media_kit: INFO: package:media_kit_libs_macos_video found
+Adding spec repo `trunk` with CDN `https://cdn.cocoapods.org/`
+[!] CDN: trunk Repo update failed - 19 error(s):
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/1.0.0/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/1.12.1303/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/1.12.1307/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/1.12.1309/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/1.17.0/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/1.2.1/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/1.20.0/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/1.22.4/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/1.3.1/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/1.3.200/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/1.3.300/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/1.9.102/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/2.0.0/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/2.0.1/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/2.0.2/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/2.10.2/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/2.5/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/3.0.0/Flutter.podspec.json Response: Couldn't resolve host name
+CDN: trunk URL couldn't be downloaded: https://cdn.jsdelivr.net/cocoa/Specs/c/0/4/Flutter/3.13.0/Flutter.podspec.json Response: Couldn't resolve host name
+Traceback (most recent call last):
+  File "/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/scripts/build_macos.py", line 159, in <module>
+    main()
+    ~~~~^^
+  File "/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/scripts/build_macos.py", line 128, in main
+    run(['pod', 'install'], cwd=root / 'macos', env=environment)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/runner/work/zhenguojian-win-macos/zhenguojian-win-macos/scripts/build_macos.py", line 37, in run
+    subprocess.run(arguments, cwd=kwargs.pop('cwd', root), check=True, **kwargs)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/lib/python3.15/subprocess.py", line 692, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['pod', 'install']' returned non-zero exit status 1.
