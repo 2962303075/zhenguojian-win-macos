@@ -18,11 +18,12 @@ import (
 	"time"
 )
 
-const updateRepo = "vjc9wrh9r9-boop/zhenguojian-win-macos"
+const updateRepo = "2962303075/zhenguojian-win-macos"
 
 var (
-	updateVersionPattern = regexp.MustCompile(`(\d+\.\d+\.\d+)\+(\d+)`)
-	updateReleasesPage   = "https://github.com/" + updateRepo + "/releases/latest"
+	updateVersionPattern  = regexp.MustCompile(`(\d+\.\d+\.\d+)\+(\d+)`)
+	updateReleasesPage    = "https://duanju.29sml.cn/"
+	updateReleasesGitPage = "https://github.com/" + updateRepo + "/releases/latest"
 
 	updateMu     sync.Mutex
 	updateStatus = struct {
@@ -149,7 +150,7 @@ func (engine *nativeEngine) fetchLatestRelease(ctx context.Context) (string, str
 		}
 	}
 	// GitHub API 不可达时退回 releases/latest 重定向解析
-	for _, address := range []string{updateReleasesPage, "https://ghfast.top/" + updateReleasesPage} {
+	for _, address := range []string{updateReleasesGitPage, "https://ghfast.top/" + updateReleasesGitPage} {
 		client := engine.updateClient()
 		client.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
 		request, err := http.NewRequestWithContext(requestCtx, http.MethodGet, address, nil)
@@ -184,7 +185,7 @@ func (engine *nativeEngine) updateDownload(raw string) (map[string]any, error) {
 	var query updateQuery
 	_ = json.Unmarshal([]byte(raw), &query)
 	if runtime.GOOS != "windows" {
-		return nil, errors.New("当前平台请前往 GitHub 下载更新")
+		return nil, errors.New("当前平台请前往官网下载更新")
 	}
 	updateMu.Lock()
 	if updateStatus.state == "downloading" || updateStatus.state == "extracting" {
@@ -243,7 +244,7 @@ func (engine *nativeEngine) runUpdateDownload(query updateQuery) {
 		}
 	}
 	if !downloaded {
-		setState("error", "下载失败，请稍后重试或前往 GitHub 下载", received, total, "", info.AssetURL)
+		setState("error", "下载失败，请稍后重试或前往官网下载", received, total, "", info.AssetURL)
 		return
 	}
 	setState("extracting", "正在解压", received, total, "", info.AssetURL)
@@ -351,7 +352,7 @@ func (engine *nativeEngine) updateStatusValue() map[string]any {
 
 func (engine *nativeEngine) updateApply() (map[string]any, error) {
 	if runtime.GOOS != "windows" {
-		return nil, errors.New("当前平台请前往 GitHub 下载更新")
+		return nil, errors.New("当前平台请前往官网下载更新")
 	}
 	updateMu.Lock()
 	staging := updateStatus.staging
