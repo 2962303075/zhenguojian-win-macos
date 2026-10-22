@@ -11,7 +11,7 @@ AppPublisher=甜橙短剧
 DefaultDirName={autopf}\甜橙短剧
 DefaultGroupName=甜橙短剧
 UninstallDisplayIcon={app}\{#MyAppExeName}
-OutputDir=dist\windows\installer
+OutputDir=..\dist\windows\installer
 OutputBaseFilename=甜橙短剧-安装版-{#MyAppVersion}
 Compression=lzma2
 SolidCompression=yes
@@ -21,7 +21,7 @@ WizardStyle=modern
 DisableProgramGroupPage=yes
 
 [Files]
-Source: "dist\windows\app\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\dist\windows\app\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
