@@ -14,6 +14,7 @@ import 'app_orientation.dart';
 import 'app_theme.dart';
 import 'app_build.dart';
 import 'stats_tracker.dart';
+import 'announcement_service.dart';
 import 'home_screen.dart';
 import 'local_store.dart';
 import 'profiles_screen.dart';
@@ -123,6 +124,8 @@ class _AppBootstrapState extends State<AppBootstrap>
           version: appVersion,
         );
       }));
+      // 公告弹窗：启动后延时拉取并展示（每日一次，异步静默）
+      unawaited(_maybeShowAnnouncement());
       await _refreshDevice();
       await repository.initialize();
       if (mounted) {
@@ -186,6 +189,23 @@ class _AppBootstrapState extends State<AppBootstrap>
         });
       }
     }
+  }
+
+  /// 启动后延时拉取公告并弹出（每日一次）。
+  Future<void> _maybeShowAnnouncement() async {
+    await Future<void>.delayed(const Duration(seconds: 2));
+    if (!mounted) return;
+    if (await AnnouncementService.seenToday()) return;
+    final announcement = await AnnouncementService.fetch();
+    if (announcement == null || !mounted) return;
+    await AnnouncementService.markSeenToday();
+    final nav = navigator.currentState;
+    if (nav == null || !mounted) return;
+    await showDialog<void>(
+      context: nav.context,
+      barrierDismissible: true,
+      builder: (_) => _AnnouncementDialog(announcement: announcement),
+    );
   }
 
   @override
@@ -312,4 +332,55 @@ class DuanjuApp extends StatelessWidget {
             ),
           ),
   );
+}
+
+/// 深色甜橙风格公告弹窗（标题 + 正文 + 可选行动按钮）。
+class _AnnouncementDialog extends StatelessWidget {
+  const _AnnouncementDialog({super.key, required this.announcement});
+
+  final Announcement announcement;
+
+  @override
+  Widget build(BuildContext context) {
+    final button = announcement.buttonText;
+    final theme = Theme.of(context);
+    return AlertDialog(
+      backgroundColor: const Color(0xFF18120C),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Row(
+        children: [
+          const Icon(Icons.campaign_outlined, color: Color(0xFFFF9A4D)),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              announcement.title,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
+      ),
+      content: Text(announcement.body),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(
+            '今日不再提示',
+            style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+          ),
+        ),
+        if (button != null && button.isNotEmpty)
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFFFF7A1E),
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+              AnnouncementService.open(announcement);
+            },
+            child: Text(button),
+          ),
+      ],
+    );
+  }
 }
